@@ -2,46 +2,45 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox spacing="20" alignment="TOP_CENTER"
+<VBox spacing="24" alignment="TOP_CENTER"
       xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.minesweeper.MinesweeperController"
-      style="-fx-background-color: #f7f9fc; -fx-padding: 25;">
+      style="-fx-background-color: #F3F6FB; -fx-padding: 40;">
 
     <!-- TOP PANEL -->
-    <VBox spacing="12" style="-fx-background-color: #ffffff; -fx-padding: 18; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 4);">
+    <VBox spacing="16" style="-fx-background-color: #FFFFFF; -fx-padding: 24; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 12, 0, 0, 4);">
 
-        <!-- Settings -->
-        <HBox spacing="12" alignment="CENTER">
-            <Label text="Rows:" style="-fx-font-size: 13;" />
-            <TextField fx:id="rowsField" text="9" prefWidth="50"
-                       style="-fx-background-radius: 6; -fx-border-color: #cccccc; -fx-border-radius: 6;" />
+        <!-- SETTINGS -->
+        <HBox spacing="16" alignment="CENTER">
+            <Label text="Rows:" style="-fx-font-size: 14;" />
+            <TextField fx:id="rowsField" text="9" prefWidth="60"
+                       style="-fx-background-radius: 8; -fx-border-color: #D1D9E6; -fx-border-radius: 8;" />
 
-            <Label text="Cols:" style="-fx-font-size: 13;" />
-            <TextField fx:id="colsField" text="9" prefWidth="50"
-                       style="-fx-background-radius: 6; -fx-border-color: #cccccc; -fx-border-radius: 6;" />
+            <Label text="Cols:" style="-fx-font-size: 14;" />
+            <TextField fx:id="colsField" text="9" prefWidth="60"
+                       style="-fx-background-radius: 8; -fx-border-color: #D1D9E6; -fx-border-radius: 8;" />
 
-            <Label text="Mines:" style="-fx-font-size: 13;" />
-            <TextField fx:id="minesField" text="10" prefWidth="50"
-                       style="-fx-background-radius: 6; -fx-border-color: #cccccc; -fx-border-radius: 6;" />
+            <Label text="Mines:" style="-fx-font-size: 14;" />
+            <TextField fx:id="minesField" text="10" prefWidth="60"
+                       style="-fx-background-radius: 8; -fx-border-color: #D1D9E6; -fx-border-radius: 8;" />
 
-            <Button fx:id="newGameButton" text="New Game"
+            <Button fx:id="newGameButton" text="🎮 New Game"
                     onAction="#handleNewGame"
-                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" />
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" />
 
-            <Button fx:id="exitButton" text="Exit Game"
+            <Button fx:id="exitButton" text="⛔ Exit"
                     onAction="#handleExit"
-                    style="-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" />
+                    style="-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" />
         </HBox>
 
-        <!-- Status Row -->
-        <HBox spacing="20" alignment="CENTER" style="-fx-padding: 5;">
+        <!-- STATUS PANEL -->
+        <HBox spacing="30" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
             <Label fx:id="movesLabel" text="Moves: 0"
                    style="-fx-font-size: 14;" />
-            <Label fx:id="gameStateLabel" text="Status: Playing" textFill="#2196F3"
+            <Label fx:id="gameStateLabel" text="Status: Playing" textFill="#1976D2"
                    style="-fx-font-size: 14; -fx-font-weight: bold;" />
             <Label fx:id="minesLabel" text="Mines: 0/0"
                    style="-fx-font-size: 14;" />
@@ -51,16 +50,16 @@
     <!-- GAME GRID -->
     <GridPane fx:id="gameGrid"
               alignment="CENTER"
-              hgap="1" vgap="1"
-              style="-fx-background-color: #ffffff; -fx-padding: 12; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 5, 0, 0, 2);" />
+              hgap="2" vgap="2"
+              style="-fx-background-color: #FFFFFF; -fx-padding: 16; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 8, 0, 0, 2);" />
 
     <!-- STATISTICS PANEL -->
-    <VBox spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 15; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 4);">
-        <Label text="Game Statistics" style="-fx-font-size: 16; -fx-font-weight: bold;" />
+    <VBox spacing="12" style="-fx-background-color: #FFFFFF; -fx-padding: 20; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);">
+        <Label text="📊 Game Statistics" style="-fx-font-size: 16; -fx-font-weight: bold;" />
         <Label fx:id="totalGamesLabel" text="Total Games: 0" style="-fx-font-size: 14;" />
         <Label fx:id="wonGamesLabel" text="Won Games: 0" style="-fx-font-size: 14;" />
-        <Button fx:id="historyButton" text="Show Game History"
+        <Button fx:id="historyButton" text="📅 Show History"
                 onAction="#showGameHistory"
-                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 6;" />
+                style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-background-radius: 8;" />
     </VBox>
 </VBox>
