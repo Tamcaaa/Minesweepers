@@ -65,6 +65,11 @@ public class MinesweeperController implements Initializable {
                 showAlert("Invalid mine count! Must be less than total cells and greater than 0.");
                 return;
             }
+            if (mines >= rows * cols - 8 || mines < 1) {
+                showAlert("Invalid mine count! Must be less than total cells minus 9 (safe zone) and greater than 0.");
+                //was not able to solve this problem yet, having on 9x9 75 mines and more costs programs crash
+                return;
+            }
 
             startNewGame(rows, cols, mines);
         } catch (NumberFormatException ex) {
