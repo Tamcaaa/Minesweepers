@@ -11,6 +11,8 @@ public class GameLogic {
     private GameState gameState;
     private int moves;
     private long startTime;
+    private boolean minesGenerated = false;
+
 
     public GameLogic(int rows, int cols, int mines) {
         this.rows = rows;
@@ -21,8 +23,7 @@ public class GameLogic {
         this.moves = 0;
         this.startTime = System.currentTimeMillis();
         initializeGrid();
-        placeMines();
-        calculateNeighborMines();
+
     }
 
     private void initializeGrid() {
@@ -68,10 +69,36 @@ public class GameLogic {
             }
         }
     }
+    private void placeMinesAvoidingFirstClick(int safeRow, int safeCol) {
+        Random random = new Random();
+        int minesPlaced = 0;
+
+        while (minesPlaced < totalMines) {
+            int row = random.nextInt(rows);
+            int col = random.nextInt(cols);
+
+            if (grid[row][col].hasMine()) continue;
+
+            // Vynechaj 3x3 oblasť okolo prvého kliknutia
+            if (Math.abs(row - safeRow) <= 1 && Math.abs(col - safeCol) <= 1) {
+                continue;
+            }
+
+            grid[row][col].setMine(true);
+            minesPlaced++;
+        }
+    }
 
     public boolean revealCell(int row, int col) {
         if (gameState != GameState.PLAYING || !isValidCell(row, col)) {
             return false;
+        }
+
+        if (!minesGenerated) {
+            placeMinesAvoidingFirstClick(row, col);
+            calculateNeighborMines();
+            minesGenerated = true;
+            startTime = System.currentTimeMillis(); // začni čas až po prvom kliknutí
         }
 
         Cell cell = grid[row][col];
@@ -96,6 +123,7 @@ public class GameLogic {
         checkWinCondition();
         return true;
     }
+
 
     private void revealEmptyNeighbors(int row, int col) {
         for (int di = -1; di <= 1; di++) {
@@ -167,6 +195,10 @@ public class GameLogic {
 
     public long getGameDurationMinutes() {
         return (System.currentTimeMillis() - startTime) / 60000;
+    }
+    public String getGameDurationOutput() {
+        long cas = System.currentTimeMillis() -startTime ;
+        return (String.format("%02d:%02d", ((cas) / 1000 / 60), ((cas / 1000) % 60)));
     }
 
     public int getFlaggedCount() {
