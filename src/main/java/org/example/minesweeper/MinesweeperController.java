@@ -34,8 +34,8 @@ public class MinesweeperController implements Initializable {
 
     public void setGameData(GameData gameData) {
         this.gameData = gameData;
-        updateStatsDisplay();
     }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -221,7 +221,7 @@ public class MinesweeperController implements Initializable {
         }
     }
 
-    private void showGameHistory() {
+    public void showGameHistory() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game History");
         alert.setHeaderText("Previous Games");
@@ -232,16 +232,23 @@ public class MinesweeperController implements Initializable {
         if (history.isEmpty()) {
             content.append("No games played yet.");
         } else {
-            for (int i = history.size() - 1; i >= Math.max(0, history.size() - 10); i--) {
+            int limit = 10;  // Zobraz max 10 posledných hier
+            int start = Math.max(0, history.size() - limit);
+            for (int i = history.size() - 1; i >= start; i--) {
                 content.append(history.get(i).toString()).append("\n");
             }
-            if (history.size() > 10) {
-                content.append("... and ").append(history.size() - 10).append(" more games");
+            if (history.size() > limit) {
+                content.append("... and ").append(history.size() - limit).append(" more games.");
             }
         }
 
-        alert.setContentText(content.toString());
-        alert.getDialogPane().setPrefWidth(500);
+        TextArea textArea = new TextArea(content.toString());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefWidth(480);
+        textArea.setPrefHeight(300);
+
+        alert.getDialogPane().setContent(textArea);
         alert.showAndWait();
     }
 
