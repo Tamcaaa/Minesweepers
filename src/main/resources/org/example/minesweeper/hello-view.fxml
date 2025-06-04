@@ -5,7 +5,7 @@
 <?import javafx.geometry.Insets?>
 
 <VBox spacing="24" alignment="TOP_CENTER"
-      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns="http://javafx.com/javafx/17.0.6"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="org.example.minesweeper.MinesweeperController"
       style="-fx-background-color: #F3F6FB; -fx-padding: 40;">
@@ -58,6 +58,7 @@
         <Label text="📊 Game Statistics" style="-fx-font-size: 16; -fx-font-weight: bold;" />
         <Label fx:id="totalGamesLabel" text="Total Games: 0" style="-fx-font-size: 14;" />
         <Label fx:id="wonGamesLabel" text="Won Games: 0" style="-fx-font-size: 14;" />
+        <Label fx:id="winRateLabel" text="Win Rate: 0%" style="-fx-font-size: 14;" />
         <Button fx:id="historyButton" text="📅 Show History"
                 onAction="#showGameHistory"
                 style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-background-radius: 8;" />
