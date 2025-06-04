@@ -275,7 +275,7 @@ public class MinesweeperGUI {
             alert.setTitle("Game Finished");
             alert.setHeaderText(null);
             alert.setContentText(message + "\nMoves: " + gameLogic.getMoves() +
-                    "\nTime: " + gameLogic.getGameDurationMinutes() + " minutes");
+                    "\nTime: " + gameLogic.getGameDurationOutput());
             alert.showAndWait();
         }
     }

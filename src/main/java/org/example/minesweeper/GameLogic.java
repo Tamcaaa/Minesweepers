@@ -168,6 +168,10 @@ public class GameLogic {
     public long getGameDurationMinutes() {
         return (System.currentTimeMillis() - startTime) / 60000;
     }
+    public String getGameDurationOutput() {
+        long cas = System.currentTimeMillis() -startTime ;
+        return (String.format("%02d:%02d", ((cas) / 1000 / 60), ((cas / 1000) % 60)));
+    }
 
     public int getFlaggedCount() {
         int count = 0;
