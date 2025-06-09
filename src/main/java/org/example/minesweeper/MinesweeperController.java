@@ -105,12 +105,19 @@ public class MinesweeperController implements Initializable {
 
                 final int row = i;
                 final int col = j;
+                Cell cell = gameLogic.getCell(row, col);
 
                 button.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
-                        if (gameLogic.revealCell(row, col)) {
+                        if (cell.isRevealed()) {
+                            gameLogic.chordCell(row, col);
                             updateDisplay();
                             checkGameEnd();
+                        } else {
+                            if (gameLogic.revealCell(row, col)) {
+                                updateDisplay();
+                                checkGameEnd();
+                            }
                         }
                     } else if (event.getButton() == MouseButton.SECONDARY) {
                         gameLogic.toggleFlag(row, col);

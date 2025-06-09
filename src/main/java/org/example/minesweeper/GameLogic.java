@@ -124,6 +124,50 @@ public class GameLogic {
         return true;
     }
 
+    public void chordCell(int row, int col) {
+        Cell cell = grid[row][col];
+        if (cell.isRevealed() && (cell.getNeighborMines() == countNeighborFlags(row, col))) {
+            for (int[] coord : getHiddenCells(row, col)) {
+                if (coord != null) {
+                    revealCell(coord[0], coord[1]);
+                }
+            }
+        } else {
+            return;
+        }
+    }
+    private int countNeighborFlags(int row, int col) {
+        int flags = 0;
+        int rows = grid.length;
+        int cols = grid[0].length;
+        int[] dr = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dc = {-1, 0, 1, -1, 1, -1, 0, 1};
+        for (int i = 0; i < 8; i++) {
+            int neighborRow = row + dr[i];
+            int neighborCol = col + dc[i];
+            if (neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < cols) {
+                if (grid[neighborRow][neighborCol].isFlagged()) flags++;
+            }
+        }
+        return flags;
+    }
+    private int[][] getHiddenCells(int row, int col) {
+        int[][] arr =  new int[8][];
+        int rows = grid.length;
+        int cols = grid[0].length;
+        int[] dr = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dc = {-1, 0, 1, -1, 1, -1, 0, 1};
+        for (int i = 0; i < 8; i++) {
+            int neighborRow = row + dr[i];
+            int neighborCol = col + dc[i];
+            if (neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < cols) {
+                if (grid[neighborRow][neighborCol].isHidden()) {
+                    arr[i] = new int[]{neighborRow, neighborCol};
+                }
+            }
+        }
+        return arr;
+    }
 
     private void revealEmptyNeighbors(int row, int col) {
         for (int di = -1; di <= 1; di++) {
