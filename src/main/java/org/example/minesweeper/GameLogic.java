@@ -197,9 +197,13 @@ public class GameLogic {
         return (System.currentTimeMillis() - startTime) / 60000;
     }
     public String getGameDurationOutput() {
-        long cas = System.currentTimeMillis() -startTime ;
-        return (String.format("%02d:%02d", ((cas) / 1000 / 60), ((cas / 1000) % 60)));
+        long cas = System.currentTimeMillis() - startTime;
+        long seconds = (cas / 1000) % 60;
+        long minutes = (cas / 1000 / 60) % 60;
+        long hours = (cas / 1000 / 60 / 60);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
+
 
     public int getFlaggedCount() {
         int count = 0;

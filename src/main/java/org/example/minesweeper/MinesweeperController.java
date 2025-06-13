@@ -1,4 +1,5 @@
 package org.example.minesweeper;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -9,8 +10,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.net.URL;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class MinesweeperController implements Initializable {
@@ -27,6 +31,12 @@ public class MinesweeperController implements Initializable {
     @FXML private Label wonGamesLabel;
     @FXML private Label winRateLabel;
     @FXML private Button historyButton;
+    @FXML private Label timeLabel;
+
+
+
+    private Timeline gameTimer;
+    private long gameStartTimeMillis;
 
     private GameLogic gameLogic;
     private GameData gameData;
@@ -41,7 +51,35 @@ public class MinesweeperController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         setupEventHandlers();
         startNewGame(9, 9, 10); // Default game
+
     }
+
+    private void startClock() {
+        gameStartTimeMillis = System.currentTimeMillis();
+
+        gameTimer = new Timeline(
+                new javafx.animation.KeyFrame(Duration.seconds(1), event -> {
+                    long elapsedMillis = System.currentTimeMillis() - gameStartTimeMillis;
+                    long seconds = (elapsedMillis / 1000) % 60;
+                    long minutes = (elapsedMillis / 1000 / 60) % 60;
+                    long hours = (elapsedMillis / 1000 / 60 / 60);
+                    String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                    timeLabel.setText("Time: " + formattedTime);
+                })
+        );
+        gameTimer.setCycleCount(Timeline.INDEFINITE);
+        gameTimer.play();
+    }
+
+
+
+
+    private void stopClock() {
+        if (gameTimer != null) {
+            gameTimer.stop();
+        }
+    }
+
 
     private void setupEventHandlers() {
         newGameButton.setOnAction(e -> handleNewGame());
@@ -84,11 +122,15 @@ public class MinesweeperController implements Initializable {
     }
 
     private void startNewGame(int rows, int cols, int mines) {
+        stopClock(); // vypni predchádzajúce hodiny
+        timeLabel.setText("Time: 00:00:00"); // resetuj displej
+
         gameLogic = new GameLogic(rows, cols, mines);
         cellButtons = new Button[rows][cols];
         createGameGrid();
         updateDisplay();
     }
+
 
     private void createGameGrid() {
         gameGrid.getChildren().clear();
@@ -108,6 +150,10 @@ public class MinesweeperController implements Initializable {
 
                 button.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY) {
+                        if (gameTimer == null || !gameTimer.getStatus().equals(Timeline.Status.RUNNING)) {
+                            startClock(); // spustí sa len pri prvom kliknutí
+                        }
+
                         if (gameLogic.revealCell(row, col)) {
                             updateDisplay();
                             checkGameEnd();
@@ -117,6 +163,9 @@ public class MinesweeperController implements Initializable {
                         updateDisplay();
                     }
                 });
+
+
+
 
                 cellButtons[i][j] = button;
                 gameGrid.add(button, j, i);
@@ -200,6 +249,7 @@ public class MinesweeperController implements Initializable {
         GameState state = gameLogic.getGameState();
         if (state != GameState.PLAYING) {
             // Record the game
+            stopClock();
             GameRecord record = new GameRecord(
                     gameLogic.getRows(),
                     gameLogic.getCols(),
@@ -219,7 +269,7 @@ public class MinesweeperController implements Initializable {
             alert.setTitle("Game Finished");
             alert.setHeaderText(null);
             alert.setContentText(message + "\nMoves: " + gameLogic.getMoves() +
-                    "\nTime: " + gameLogic.getGameDurationMinutes() + " minutes");
+                    "\nTime: " + gameLogic.getGameDurationOutput());
             alert.showAndWait();
 
             updateStatsDisplay();
