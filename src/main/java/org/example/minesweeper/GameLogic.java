@@ -13,7 +13,6 @@ public class GameLogic {
     private long startTime;
     private boolean minesGenerated = false;
 
-
     public GameLogic(int rows, int cols, int mines) {
         this.rows = rows;
         this.cols = cols;
@@ -23,19 +22,17 @@ public class GameLogic {
         this.moves = 0;
         this.startTime = System.currentTimeMillis();
         initializeGrid();
-
     }
 
     private void initializeGrid() {
         grid = new Cell[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                grid[i][j] = new Cell();
+                grid[i][j] = new EmptyCell();
             }
         }
     }
-
-    private void placeMines() {
+    private void placeMinesAvoidingFirstClick(int safeRow, int safeCol) {
         Random random = new Random();
         int minesPlaced = 0;
 
@@ -43,10 +40,11 @@ public class GameLogic {
             int row = random.nextInt(rows);
             int col = random.nextInt(cols);
 
-            if (!grid[row][col].hasMine()) {
-                grid[row][col].setMine(true);
-                minesPlaced++;
-            }
+            if (grid[row][col].hasMine()) continue;
+            if (Math.abs(row - safeRow) <= 1 && Math.abs(col - safeCol) <= 1) continue;
+
+            grid[row][col] = new MineCell();
+            minesPlaced++;
         }
     }
 
@@ -69,42 +67,19 @@ public class GameLogic {
             }
         }
     }
-    private void placeMinesAvoidingFirstClick(int safeRow, int safeCol) {
-        Random random = new Random();
-        int minesPlaced = 0;
-
-        while (minesPlaced < totalMines) {
-            int row = random.nextInt(rows);
-            int col = random.nextInt(cols);
-
-            if (grid[row][col].hasMine()) continue;
-
-            // Vynechaj 3x3 oblasť okolo prvého kliknutia
-            if (Math.abs(row - safeRow) <= 1 && Math.abs(col - safeCol) <= 1) {
-                continue;
-            }
-
-            grid[row][col].setMine(true);
-            minesPlaced++;
-        }
-    }
 
     public boolean revealCell(int row, int col) {
-        if (gameState != GameState.PLAYING || !isValidCell(row, col)) {
-            return false;
-        }
+        if (gameState != GameState.PLAYING || !isValidCell(row, col)) return false;
 
         if (!minesGenerated) {
             placeMinesAvoidingFirstClick(row, col);
             calculateNeighborMines();
             minesGenerated = true;
-            startTime = System.currentTimeMillis(); // začni čas až po prvom kliknutí
+            startTime = System.currentTimeMillis();
         }
 
         Cell cell = grid[row][col];
-        if (cell.isRevealed() || cell.isFlagged()) {
-            return false;
-        }
+        if (cell.isRevealed() || cell.isFlagged()) return false;
 
         moves++;
         cell.setState(CellState.REVEALED);
@@ -123,7 +98,6 @@ public class GameLogic {
         checkWinCondition();
         return true;
     }
-
 
     private void revealEmptyNeighbors(int row, int col) {
         for (int di = -1; di <= 1; di++) {
@@ -145,20 +119,12 @@ public class GameLogic {
     }
 
     public void toggleFlag(int row, int col) {
-        if (gameState != GameState.PLAYING || !isValidCell(row, col)) {
-            return;
-        }
+        if (gameState != GameState.PLAYING || !isValidCell(row, col)) return;
 
         Cell cell = grid[row][col];
-        if (cell.isRevealed()) {
-            return;
-        }
+        if (cell.isRevealed()) return;
 
-        if (cell.isFlagged()) {
-            cell.setState(CellState.HIDDEN);
-        } else {
-            cell.setState(CellState.FLAGGED);
-        }
+        cell.setState(cell.isFlagged() ? CellState.HIDDEN : CellState.FLAGGED);
     }
 
     private void revealAllMines() {
@@ -182,7 +148,6 @@ public class GameLogic {
         return row >= 0 && row < rows && col >= 0 && col < cols;
     }
 
-    // Getters
     public Cell getCell(int row, int col) {
         return isValidCell(row, col) ? grid[row][col] : null;
     }
@@ -196,18 +161,17 @@ public class GameLogic {
     public long getGameDurationMinutes() {
         return (System.currentTimeMillis() - startTime) / 60000;
     }
+
     public String getGameDurationOutput() {
-        long cas = System.currentTimeMillis() -startTime ;
-        return (String.format("%02d:%02d", ((cas) / 1000 / 60), ((cas / 1000) % 60)));
+        long cas = System.currentTimeMillis() - startTime;
+        return String.format("%02d:%02d", (cas / 1000 / 60), (cas / 1000) % 60);
     }
 
     public int getFlaggedCount() {
         int count = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (grid[i][j].isFlagged()) {
-                    count++;
-                }
+                if (grid[i][j].isFlagged()) count++;
             }
         }
         return count;

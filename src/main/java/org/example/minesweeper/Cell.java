@@ -1,24 +1,15 @@
 package org.example.minesweeper;
 
-public class Cell {
-    private boolean hasMine;
+public abstract class Cell {
     private int neighborMines;
     private CellState state;
 
     public Cell() {
-        this.hasMine = false;
         this.neighborMines = 0;
         this.state = CellState.HIDDEN;
     }
 
-    // Getters and Setters
-    public boolean hasMine() {
-        return hasMine;
-    }
-
-    public void setMine(boolean hasMine) {
-        this.hasMine = hasMine;
-    }
+    public abstract boolean hasMine();  // abstraktná metóda
 
     public int getNeighborMines() {
         return neighborMines;
